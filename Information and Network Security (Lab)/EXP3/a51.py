@@ -2,16 +2,19 @@ def majority(x, y, z):
     # Returns the majority bit
     return (x & y) | (x & z) | (y & z)
 
+
 def clock(register, majority_bit):
     new_bit = register[18] ^ majority_bit
     register.pop()
     register.insert(0, new_bit)
 
+
 def generate_keystream(key, num_bits):
-    R1 = list(key) + [0] * (19 - len(key)) # Makes the First Register 19 bits long
-    R2 = [0] * 22 # Makes the Second Register 22 bits long
-    R3 = [0] * 23 # Makes the Third Register 23 bits long
-    keystream = [] # Stores the keystream
+    # Convert key to a list of integers
+    R1 = [int(bit) for bit in key] + [0] * (19 - len(key))
+    R2 = [0] * 22
+    R3 = [0] * 23 
+    keystream = []
 
     for _ in range(num_bits):
         majority_bit = majority(R1[8], R2[10], R3[10])
@@ -42,10 +45,9 @@ def a51_decrypt(key, ciphertext):
     return a51_encrypt(key, ciphertext)
 
 
-
 def main():
-    key = "1010101010101010101"  # 19-bit key
-    plaintext = "1101101010101010101"  # Example plaintext
+    key = "1010101010101010101"
+    plaintext = "1101101010101010101"
 
     ciphertext = a51_encrypt(key, plaintext)
     decrypted_text = a51_decrypt(key, ciphertext)

@@ -4,6 +4,7 @@ def printArray(arr, n):
             print(arr[i][j], end=" ")
         print()
 
+
 def textGen(arr, n):
     text = ""
     for i in range(n):
@@ -11,6 +12,7 @@ def textGen(arr, n):
             # print(arr[i][j], end=" ")
             text += arr[i][j]
     return text
+
 
 def row_transpose_encrypt(text, key):
     text_length = len(text)
@@ -38,8 +40,8 @@ def row_transpose_encrypt(text, key):
     print()
     twoD_2 = twoD.copy()
 
-    for i in range(len(key1)): # [3,1,2]
-        twoD_2[i] = twoD[int(key1[i])-1] #
+    for i in range(len(key1)):  # [3,1,2]
+        twoD_2[i] = twoD[int(key1[i])-1]
 
     printArray(twoD_2, row)
     cipher_text = textGen(twoD_2, row)
@@ -122,7 +124,6 @@ def column_transpose_encrypt(text, key):
 
 def column_transpose_decrypt(text, key):
     text_length = len(text)
-
     key1 = key.split(" ")
 
     for i in range(text_length):
@@ -144,31 +145,32 @@ def column_transpose_decrypt(text, key):
     printArray(twoD, col)
     print()
     key1 = [int(i) - 1 for i in key1]
-    original_array = []
+    original_array = [[" " for i in range(col)] for j in range(row)] 
     for i in range(row):
-        original_row = []
         for j in range(col):
-            original_row.append(twoD[i][key1[j]])
-        original_array.append(original_row)
+            original_array[i][key1[j]] = twoD[i][j]
     printArray(original_array, col)
 
     plain_text = ""
-    for row in original_array:
-        for char in row:
-            plain_text += char
+    for i in range(row):
+        for j in range(col):
+            plain_text += original_array[i][j]
     print("Plain Text: ", plain_text)
     return plain_text
 
-# user_text = input("Enter the text: ")
-# user_key = input("Enter the key: ")
 
-# cipher_text = row_transpose_encrypt(user_text, user_key)
-# plain_text = row_transpose_decrypt(cipher_text, user_key)
 
-# cipher_text = column_transpose_encrypt(user_text, user_key)
-# plain_text = column_transpose_decrypt(cipher_text, user_key)
+def double_transposition_encrypt(text, key1, key2):
+    intermediate_cipher = row_transpose_encrypt(text, key1)
+    final_cipher = column_transpose_encrypt(intermediate_cipher, key2)
+    return final_cipher
 
-# column_transpose_encrypt(user_text, user_key)
+
+def double_transposition_decrypt(cipher_text, key1, key2):
+    intermediate_plain = column_transpose_decrypt(cipher_text, key2)
+    original_plain = row_transpose_decrypt(intermediate_plain, key1)
+    return original_plain
+
 
 x = True
 while x:
@@ -176,7 +178,9 @@ while x:
     print("Enter 2 for Row Transpose Decryption")
     print("Enter 3 for Column Transpose Encryption")
     print("Enter 4 for Column Transpose Decryption")
-    print("Enter 5 to exit")
+    print("Enter 5 for Double Transposition Encryption")
+    print("Enter 6 for Double Transposition Decryption")
+    print("Enter 7 to exit")
     choice = int(input("Enter your choice: "))
     if choice == 1:
         user_text = input("Enter the text: ")
@@ -195,6 +199,16 @@ while x:
         user_key = input("Enter the key: ")
         plain_text = column_transpose_decrypt(user_text, user_key)
     elif choice == 5:
+        user_text = input("Enter the text: ")
+        user_key1 = input("Enter the key1: ")
+        user_key2 = input("Enter the key2: ")
+        cipher_text = double_transposition_encrypt(user_text, user_key1, user_key2)
+    elif choice == 6:
+        user_text = input("Enter the text: ")
+        user_key1 = input("Enter the key1: ")
+        user_key2 = input("Enter the key2: ")
+        plain_text = double_transposition_decrypt(user_text, user_key1, user_key2)
+    elif choice == 7:
         x = False
-
-
+    else:
+        print("Invalid Choice. Please choose a correct input!!")
