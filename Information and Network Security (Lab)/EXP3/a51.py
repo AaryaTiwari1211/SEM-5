@@ -9,6 +9,7 @@ def clock(register, majority_bit):
     register.insert(0, new_bit)
 
 
+
 def generate_keystream(key, num_bits):
     # Convert key to a list of integers
     R1 = [int(bit) for bit in key] + [0] * (19 - len(key))
