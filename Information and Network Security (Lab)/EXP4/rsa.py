@@ -1,89 +1,79 @@
-import sympy
 import random
-l = 100
-h = 1000
 
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
 
-def modular_inverse(a, m):
-    g, x, y = sympy.gcdex(a, m)
-    if g != 1:
-        raise ValueError("Modular inverse does not exist")
-    return x % m
+def multiplicative_inverse(e, phi):
+    d = 0
+    x1, x2 = 0, 1
+    y1, y2 = 1, 0
+    while phi:
+        quotient = e // phi
+        e, phi = phi, e % phi
+        x1, x2 = x2 - quotient * x1, x1
+        y1, y2 = y2 - quotient * y1, y1
+    d = x2
+    return d
 
+def generate_keypair(p, q):
+    n = p * q
+    phi = (p - 1) * (q - 1)
+    e = random.randrange(2, phi)
+    while gcd(e, phi) != 1:
+        e = random.randrange(2, phi)
+    d = multiplicative_inverse(e, phi)
+    
+    return ((n, e), (n, d))
 
-def prime_number_gen(l, h):
-    prime_numbers = list(sympy.primerange(l, h+1))
+def encrypt(public_key, message):
+    n, e = public_key
+    encrypted = []
 
-    p1 = random.choice(prime_numbers)
-    p2 = random.choice(prime_numbers)
-    return p1, p2
+    for char in message:
+        char_value = ord(char)
+        encrypted_value = pow(char_value, e, n)
+        encrypted.append(encrypted_value)
+    
+    return encrypted
 
+def decrypt(private_key, encrypted):
+    n, d = private_key
+    decrypted = []
 
-def euler_totient(p, q):
-    return (p-1)*(q-1)
+    for encrypted_value in encrypted:
+        char_value = pow(encrypted_value, d, n)
+        decrypted_char = chr(char_value)
+        decrypted.append(decrypted_char)
+    return ''.join(decrypted)
 
+def main_menu():
+    print("RSA Encryption and Decryption")
+    print("1. Encrypt a message")
+    print("2. Decrypt a message")
+    print("3. Quit")
+    choice = int(input("Enter your choice: "))
+    return choice
 
-def e_calculator(fi):
+if __name__ == '__main__':
+    p = 61
+    q = 53
+    public_key, private_key = generate_keypair(p, q)
+    
     while True:
-        e = random.randint(2, fi - 1)
-        if sympy.gcd(e, fi) == 1:
-            return e
-
-
-def d_calculator(e, fi):
-    return modular_inverse(e, fi)
-
-
-# def public_key_gen(e, n):
-#     public_key = (e, n)
-#     return public_key
-
-def public_key_gen(p, q):
-    n = p * q
-    fi = euler_totient(p, q)
-    e = 65537
-    return e, n
-
-
-def private_key_gen(d, n):
-    private_key = (d, n)
-    return private_key
-
-
-def encryptor(public_key, message):
-    e, n = public_key
-    encrypted_message = message**e % n
-    return encrypted_message
-
-
-def decryptor(private_key, encrypted_message):
-    d, n = private_key
-    decrypted_message = pow(encrypted_message, d, n)
-    return decrypted_message
-
-
-def main():
-    # p, q = prime_number_gen(l, h)
-    p = 103
-    q = 127
-    n = p * q
-    fi = euler_totient(p, q)
-
-    # Choose a fixed value for e, such as 65537
-    e = 65537
-
-    # Calculate the modular inverse of e with respect to fi
-    d = modular_inverse(e, fi)
-
-    public_key = public_key_gen(e, n)
-    private_key = private_key_gen(d, n)
-
-    message = int(input("Enter the message: "))
-    encrypted_message = encryptor(public_key, message)
-    decrypted_message = decryptor(private_key, encrypted_message)
-
-    print("Encrypted message:", encrypted_message)
-    print("Decrypted message:", decrypted_message)
-
-
-main()
+        choice = main_menu()
+        
+        if choice == 1:
+            message = input("Enter the message to encrypt: ")
+            encrypted_message = encrypt(public_key, message)
+            print("Encrypted message:", encrypted_message)
+        elif choice == 2:
+            encrypted_message = list(map(int, input("Enter the encrypted message values (comma-separated): ").split(',')))
+            decrypted_message = decrypt(private_key, encrypted_message)
+            print("Decrypted message:", decrypted_message)
+        elif choice == 3:
+            print("Exiting the program.")
+            break
+        else:
+            print("Invalid choice. Please select again.")
