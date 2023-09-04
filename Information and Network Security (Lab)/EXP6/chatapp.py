@@ -34,19 +34,18 @@ def diffie_hellman():
     prime = 7297
     generator = calculate_generator(prime)
     print("Generator:", generator)
-    #Alice and Bob's private keys are known only to them
+    
     alice_private_key = random.randint(1, prime-1)
     bob_private_key = random.randint(1, prime-1)
+    
     print("Alice's private key:", alice_private_key)
     print("Bob's private key:", bob_private_key)
     
-    #Alice and Bob's public keys are calculated using their private keys
     alice_public_key = calculate_modular_exponentiation(generator, alice_private_key, prime)
     print("Alice's public key:", alice_public_key)
     bob_public_key = calculate_modular_exponentiation(generator, bob_private_key, prime)
     print("Bob's public key:", bob_public_key)
 
-    # Calculate shared secrets
     alice_shared_secret = calculate_modular_exponentiation(bob_public_key, alice_private_key, prime)
     bob_shared_secret = calculate_modular_exponentiation(alice_public_key, bob_private_key, prime)
 
