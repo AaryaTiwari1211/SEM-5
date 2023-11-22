@@ -10,10 +10,23 @@ def decrypt(private_key, encrypted_value):
     decrypted_value = pow(int(encrypted_value), d, n)
     return decrypted_value
 
+def is_prime(p):
+    if p<2:
+        return False
+    for i in range(2,math.isqrt(p)+1):
+        if p%i==0:
+            return False
+    return True
 
 def rsa_main():
-    p = int(input("Enter p: "))
-    q = int(input("Enter q: "))
+    while True:
+        p = int(input("Enter p: "))
+        q = int(input("Enter q: "))
+        
+        if not is_prime(p) or not is_prime(q):
+            print("Either p or q is not prime. Try again!!")
+        else:
+            break
     
     n = p*q
     phi = (p-1)*(q-1)

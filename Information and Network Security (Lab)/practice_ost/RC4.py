@@ -1,13 +1,13 @@
 import math
 
-n = 8
+n = 256
 
 def int_converter(arr):
     arr = arr.split()
     arr = list(map(int,arr))
     return arr
 
-def key_scheduling(S,key,plaintext):
+def key_scheduling(S,key):
     j = 0
     T = []
     for i in range(len(S)):

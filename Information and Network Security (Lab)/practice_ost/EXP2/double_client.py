@@ -1,4 +1,5 @@
 import socket
+
 def columnar_encrypt(text, key):
     text_length = len(text)
     max_ = max(key)
@@ -33,11 +34,10 @@ def row_encrypt(text, key):
                 arr[i][j] = text[x]
                 x = x + 1
     encrypted = ""
-    for j in key:
-        for i in range(len(arr[i])):  # [1,3,2,0]
-            encrypted += arr[j][i]
+    for i in key:
+        for j in range(len(arr[j])):  # [1,3,2,0]
+            encrypted += arr[i][j]
     return encrypted
-
 
 def socket_function():
     client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
