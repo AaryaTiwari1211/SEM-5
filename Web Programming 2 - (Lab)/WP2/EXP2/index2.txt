@@ -1,0 +1,5 @@
+The fread() function reads from an open file.
+
+The first parameter of fread() contains the name of the file to read from and the second parameter specifies the maximum number of bytes to read.
+
+The following PHP code reads the "webdictionary.txt" file to the end:
